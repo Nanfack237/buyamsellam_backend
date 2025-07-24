@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Supplier;
+use App\Models\Purchase;
 use App\Traits\ApiResponser;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -108,9 +109,9 @@ class SupplierController extends Controller
         $supplier->contact = $editSupplierData['contact'];
 
         if ($supplier->save()) {
-            $status = 201;
+            $status = 200;
             $response = [
-                'error' => 'Supplier edited successfully!',
+                'success' => 'Supplier edited successfully!',
                 'supplier' => $supplier,
             ];
         } else {
@@ -148,25 +149,45 @@ class SupplierController extends Controller
 
     }
 
-    // public function delete(Request $request, $id)
-    // {
+    public function delete(Request $request, $id)
+    {
 
-    //     $storeData = json_decode($request->store, true);
-    //     $store_id = $storeData['id'];
+        $storeData = json_decode($request->store, true);
+        $store_id = $storeData['id'];
 
-    //     $supplier = Supplier::where('store_id', $store_id)->find($id);
-    //     if($supplier->delete()){
-    //         $status = 200;
-    //         $response = [
-    //             'success' => 'Supplier deleted successfully',
-    //         ];
-    //     } else {
-    //         $status = 422;
-    //         $response = [
-    //             'error' => 'error, failed to delete supplier',
-    //         ];
-    //     }
+        $supplier = Supplier::where('store_id', $store_id)->find($id);
 
-    //     return response()->json($response, $status);
-    // }
+        if (!$supplier) {
+            return response()->json(['error' => 'Supplier not found or does not belong to this store.'], 404);
+        }
+        
+        $purchase = Purchase::where('supplier_id', $supplier->id)
+                                ->where('store_id', $store_id)
+                                ->exists();
+
+       if ($purchase && $supplier) {
+
+            $status = 409;
+            $response = [
+                'error' => 'Cannot delete supplier: It has associated with purchase records.',
+            ];
+
+        } else {
+       
+            if($supplier->delete()){
+                $status = 200;
+                $response = [
+                    'success' => 'Supplier deleted successfully',
+                ];
+            } else {
+                $status = 422;
+                $response = [
+                    'error' => 'error, failed to delete supplier',
+                ];
+            }
+
+        }
+
+        return response()->json($response, $status);
+    }
 }

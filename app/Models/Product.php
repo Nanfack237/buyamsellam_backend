@@ -18,7 +18,8 @@ class Product extends Model
         'name',
         'category',
         'description',
-        'image',
+        'image1',
+        'image2',
         'store_id',
         'user_id',
         'status'

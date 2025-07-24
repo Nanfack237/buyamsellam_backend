@@ -14,11 +14,11 @@ return new class extends Migration
         Schema::create('employees', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('email')->nullable();
+            $table->string('email');
             $table->string('address');
             $table->integer('contact');
-            $table->string('image');
-            $table->enum('role', ['cashier', 'stock_controller']);
+            $table->string('image')->nullable();
+            $table->string('role');
             $table->foreignId('store_id')->constrained()->onDelete('cascade');
             $table->integer('user_id')->default(null);
             $table->integer('status');

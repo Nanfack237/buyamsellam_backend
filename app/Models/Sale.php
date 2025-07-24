@@ -22,6 +22,8 @@ class Sale extends Model
         'customer_id',
         'customer_name',
         'customer_contact',
+        'payment_method',
+        'receipt_code',
         'user_id',
         'status'
     ];

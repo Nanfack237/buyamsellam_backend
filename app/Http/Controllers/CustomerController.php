@@ -93,7 +93,7 @@ class CustomerController extends Controller
             return $this->error('error', Response::HTTP_UNPROCESSABLE_ENTITY, $validator->errors());
         }
 
-        $userData = json_decode($request->store, true);
+        $userData = json_decode($request->user, true);
         $user_id = $userData['id'];
 
         $storeData = json_decode($request->store, true);
@@ -150,10 +150,13 @@ class CustomerController extends Controller
 
     // Cashier Customer
 
-    public function cashierCustomer(Request $request, $id){
+    public function cashierCustomer(Request $request, $id)
+    {
 
-       
-        $customers = Customer::where('store_id', $id)->get();
+        $userData = json_decode($request->user, true);
+        $user_id = $userData['id'];
+
+        $customers = Customer::where('user_id', $user_id)->where('store_id', $id)->get();
 
         if($customers){
 

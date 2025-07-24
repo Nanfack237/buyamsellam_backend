@@ -16,7 +16,8 @@ return new class extends Migration
             $table->string('name');
             $table->string('category');
             $table->text('description');
-            $table->string('image');
+            $table->string('image1');
+            $table->string('image2')->nullable();
             $table->foreignId('store_id')->constrained()->onDelete('cascade');            
             $table->foreignId('user_id')->constrained()->onDelete('cascade');            
             $table->integer('status');

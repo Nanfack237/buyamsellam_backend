@@ -16,8 +16,10 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->string('name');
             $table->string('password');
-            $table->string('image');
-            $table->enum('role', ['manager', 'cashier', 'stock_controller', 'super_admin']);
+            $table->string('image')->nullable();
+            $table->string('address')->nullable();
+            $table->integer('contact')->nullable();
+            $table->string('role');
             $table->string('api_token', 80)->unique()->nullable()->default(null);
             $table->integer('store_limit')->default(1);
             $table->rememberToken();

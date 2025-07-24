@@ -18,7 +18,9 @@ return new class extends Migration
             $table->text('description');
             $table->string('location');
             $table->integer('contact');
-            $table->string('image');
+            $table->string('image1');
+            $table->string('image2')->nullable();
+            $table->string('logo')->nullable();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->time('closing_time')->default('19:00');
             $table->integer('daily_summary')->default(1);

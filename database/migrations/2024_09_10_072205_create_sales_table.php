@@ -21,8 +21,10 @@ return new class extends Migration
             $table->integer('selling_price');
             $table->integer('total_price');
             $table->integer('customer_id')->default(null);
-            $table->string('customer_name');
-            $table->integer('customer_contact');
+            $table->string('customer_name')->nullable();
+            $table->integer('customer_contact')->nullable();
+            $table->string('payment_method');
+            $table->string('receipt_code');
             $table->integer('status');
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->timestamps();

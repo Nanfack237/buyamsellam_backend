@@ -18,6 +18,7 @@ use App\Models\Employee;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Storage; 
 
 
 class EmployeeController extends Controller
@@ -50,6 +51,13 @@ class EmployeeController extends Controller
     }
 
     public function store(Request $request){
+        
+
+        $userData = json_decode($request->user, true);
+        $user_id = $userData['id'];
+
+        $user = User::find($user_id);
+        $userEmail = $user->email;
 
         $storeData = json_decode($request->store, true);
         $store_id = $storeData['id'];
@@ -61,7 +69,8 @@ class EmployeeController extends Controller
             'role' => 'required|string',
             'address'=>'required|string',
             'contact'=>'required|integer',
-            'image'=>'required|image|mimes:jpeg,png,jpg,gif',
+            'image'=>'required|image|mimes:jpeg,png,jpg,gif|max:32768',
+           
         ]);
 
         if ($validator->fails()) {
@@ -71,7 +80,7 @@ class EmployeeController extends Controller
         $path = null;
 
         if($request->hasFile('image')){
-            $path = $request->file('image')->store('employeeImages', 'public');
+            $path = $request->file('image')->store("stores/store_$userEmail/employeeImages", 'public');
         }
 
         $storeEmployeeData = $validator->validated();
@@ -137,41 +146,99 @@ class EmployeeController extends Controller
 
     public function edit(Request $request, $id)
     {
-        $validator = Validator::make($request->all(), [
-            'name' => 'required|string|min:4',
-            'email' => 'required|string|email|min:4',
-            'address' => 'required|string',
-            'contact' => 'required|integer',
-        ]);
 
-        if ($validator->fails()) {
-            return $this->error('error', Response::HTTP_UNPROCESSABLE_ENTITY, $validator->errors());
+        $userData = json_decode($request->user, true);
+        $userId = $userData['id'];
+
+        // Find the user to get their email for directory naming
+        $user = User::find($userId);
+
+        // Check if the user exists
+        if (!$user) {
+            return response()->json(['error' => 'User not found.'], 404);
         }
+
+        $userEmail = $user->email;
 
         $storeData = json_decode($request->store, true);
         $store_id = $storeData['id'];
 
+        // 2. Find the employee by store_id and ID
         $employee = Employee::where('store_id', $store_id)->find($id);
 
-        $editEmployeeData = $validator->validated(); // Get validated data as array
-
-        $employee->name = $editEmployeeData['name'];
-        $employee->email = $editEmployeeData['email'];
-        $employee->address = $editEmployeeData['address'];
-        $employee->contact = $editEmployeeData['contact'];
-
-        if ($employee->save()) {
-            $status = 201;
-            $response = [
-                'error' => 'Employee edited successfully!',
-                'employee' => $employee,
-            ];
-        } else {
-            $status = 422;
-            $response = [
-                'error' => 'Error, failed to edit the Employee!',
-            ];
+        // 3. If employee not found, return 404
+        if (!$employee) {
+            return response()->json(['error' => 'Employee not found.'], Response::HTTP_NOT_FOUND); // 404 Not Found
         }
+
+        // 4. Define validation rules
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|string|min:4|max:255', // Added max:255
+            'email' => 'required|string|email|min:4|max:255', // Added max:255
+            'address' => 'required|string|max:255', // Added max:255
+            'contact' => ['required', 'string', 'regex:/^\+?\d{6,15}$/'], // Changed to string and added regex for phone numbers
+            'role' => 'required|string|in:manager,cashier,stock_controller,staff', // Added validation for role
+            'status' => 'required|integer|in:0,1', // Added validation for status (0 or 1)
+            'image' => 'nullable|image|mimes:jpeg,png,bmp,gif,webp|max:2048', // Allows images, optional, max 2MB
+        ]);
+
+        // 5. If validation fails, return validation errors
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], Response::HTTP_UNPROCESSABLE_ENTITY); // 422 Unprocessable Entity
+        }
+
+        // 6. Handle image upload/removal logic
+        if ($request->hasFile('image')) {
+            // New image uploaded, delete old one if exists
+            if ($employee->image) {
+                Storage::disk('public')->delete($employee->image);
+            }
+            $employee->image = $request->file('image')->store("stores/store_$userEmail/employeeImages", 'public');
+        } elseif ($request->input('image') === 'CLEAR_IMAGE') {
+            // Frontend sent 'CLEAR_IMAGE', delete existing image
+            if ($employee->image) {
+                Storage::disk('public')->delete($employee->image);
+            }
+            $employee->image = null; // Set DB field to null
+        }
+        // else: If 'image' is not present in the request (neither file nor 'CLEAR_IMAGE'),
+        // it means the image was untouched on the frontend. Do nothing,
+        // so $employee->image retains its current value.
+
+        // 7. Update other employee fields from validated data
+        $employee->name = $request->input('name');
+        $employee->email = $request->input('email');
+        $employee->address = $request->input('address');
+        $employee->contact = $request->input('contact');
+        $employee->role = $request->input('role');
+        $employee->status = $request->input('status');
+
+        $email = $request->input('email');
+        $user = User::where('email', $email)->first();
+
+        if($user){
+
+            $user->status = $request->input('status');
+            if($user->save()){
+
+                if ($employee->save()) {
+                    $status = 200;
+                    $response = [
+                        'success' => 'Employee edited successfully!',
+                        'employee' => $employee,
+                    ];
+                } else {
+                    $status = 422;
+                    $response = [
+                        'error' => 'Error, failed to edit the Employee!',
+                    ];
+                }
+            }
+
+
+        }
+
+        
 
         return response()->json($response, $status);
     }

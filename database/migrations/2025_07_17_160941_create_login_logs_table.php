@@ -11,13 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('customers', function (Blueprint $table) {
+        Schema::create('login_logs', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->integer('contact')->nullable();
-            $table->foreignId('store_id')->constrained()->onDelete('cascade');
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->integer('status');
+            $table->integer('store_id')->nullable();
+            $table->string('ip_address', 45);
+            $table->text('user_agent');
+            $table->date('date');
+            $table->time('login_time');
             $table->timestamps();
         });
     }
@@ -27,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('customers');
+        Schema::dropIfExists('login_logs');
     }
 };

@@ -18,6 +18,7 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->integer('quantity');
             $table->double('cost_price', 8, 2);
+            $table->double('selling_price', 8, 2);
             $table->integer('last_quantity');
             $table->integer('threshold_quantity');
             $table->integer('status');

@@ -21,6 +21,8 @@ class User extends Authenticatable
         'email',
         'password',
         'image',
+        'address',
+        'contact',
         'role',
         'store_id',
         'store_limit',

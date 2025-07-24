@@ -18,6 +18,7 @@ class Stock extends Model
         'store_id',
         'quantity',
         'cost_price',
+        'selling_price',
         'last_quantity',
         'threshold_quantity',
         'user_id',
