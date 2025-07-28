@@ -306,6 +306,7 @@ class PurchaseController extends Controller
         return response()->json($response, $status);
     }
 
+   
     public function purchaseWeek(Request $request){
 
         $storeData = json_decode($request->store, true);
@@ -315,7 +316,7 @@ class PurchaseController extends Controller
         $endDate = Carbon::now()->startOfWeek(Carbon::MONDAY)->addDays(7);
 
         $purchases = Purchase::whereBetween('date', [$startDate, $endDate])
-        ->selectRaw('DAYOFWEEK(date) as weekday, SUM(unit_price) as total')
+        ->selectRaw('DAYOFWEEK(date) as weekday, SUM(total_price) as total')
         ->where('store_id', $store_id)
         ->groupBy('weekday')
         ->orderBy('weekday')

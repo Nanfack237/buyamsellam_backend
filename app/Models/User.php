@@ -26,6 +26,7 @@ class User extends Authenticatable
         'role',
         'store_id',
         'store_limit',
+        'locale',
         'status'
     ];
 

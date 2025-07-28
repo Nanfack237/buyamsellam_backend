@@ -292,6 +292,7 @@ class AuthController extends Controller
             'contact' => $registerUserData['contact'],
             'image' => 'images/admin',
             'role' => 'admin',
+            'locale' => 'en',
             'store_limit' => 100,
             'status' => 1
         ]);
@@ -364,6 +365,7 @@ class AuthController extends Controller
                 'contact'=> $registerUserData['contact'],
                 'image'=> $path,
                 'role' => 'manager',
+                'locale' => 'en',
                 'store_limit' => 1,
                 'status' => 1
             ]);

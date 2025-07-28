@@ -15,7 +15,7 @@ return [
     'total' => 'Total:',
     'thank_you_message' => 'Merci pour votre achat !',
     'anonymous_customer' => 'Anonyme',
-    'currency' => 'FCFA',
+    'currency' => '(FCFA)',
 ];
 
 ?>

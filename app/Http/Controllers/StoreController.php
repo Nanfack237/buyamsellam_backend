@@ -355,7 +355,7 @@ class StoreController extends Controller
         $userData = json_decode($request->user, true);
         $user_id = $userData['id'];
 
-        $validator = Validator::make($request->all(), [
+         $validator = Validator::make($request->all(), [
             
             'daily_summary'=>'required|integer|in:0,1',
             

@@ -24,6 +24,7 @@ return new class extends Migration
             $table->integer('store_limit')->default(1);
             $table->rememberToken();
             $table->integer('status');
+             $table->string('locale', 10)->default('en'); // User's preferred language, e.g., 'en', 'fr'
             $table->timestamps();
         });
 

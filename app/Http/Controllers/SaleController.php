@@ -569,7 +569,10 @@ class SaleController extends Controller
         $store_id = $storeData['id'];
 
         $date = now()->toDateString();
-        $totalSalePerDay = Sale::where('store_id', $store_id)->where('date', $date)->count();
+        $totalSalePerDay = Sale::where('store_id', $store_id)
+                                ->where('date', $date)
+                                ->distinct('receipt_code')   
+                                ->count();
 
         $status = 200;
         $response = [
@@ -1046,7 +1049,7 @@ class SaleController extends Controller
         }
 
         // 6. Use count() to get the number of sale records (transactions) for the filtered period.
-        $totalSaleCount = $query->count();
+        $totalSaleCount = $query->distinct('receipt_code')->count();
 
         // 7. Return the calculated total sales count as a JSON response.
         return response()->json(['totalSaleCount' => $totalSaleCount], Response::HTTP_OK);

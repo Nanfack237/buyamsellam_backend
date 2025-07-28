@@ -15,7 +15,7 @@ return [
     'total' => 'Total:',
     'thank_you_message' => 'Thank you for your purchase!',
     'anonymous_customer' => 'Anonymous', // Added for consistency with frontend
-    'currency' => 'FCFA', // Or whatever your currency code is
+    'currency' => '(FCFA)', // Or whatever your currency code is
 ];
 
 ?>
