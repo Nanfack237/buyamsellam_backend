@@ -109,10 +109,13 @@ class EmployeeController extends Controller
                 $user = User::create([
                     'email' => $storeEmployeeData['email'],
                     'name' => $storeEmployeeData['name'],
+                    'address' => $storeEmployeeData['address'],
+                    'contact' => $storeEmployeeData['contact'],
                     'image'=> $path,
                     'password' => Hash::make($storeEmployeeData['password']),
                     'role' => $storeEmployeeData['role'],
                     'store_limit' => 1,
+                    'locale' => 'en',
                     'status' => 1
 
                 ]);

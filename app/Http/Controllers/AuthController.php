@@ -120,14 +120,20 @@ class AuthController extends Controller
            
             } else {
 
-                LoginLog::create([
-                    'user_id' => $user->id,
-                    'store_id' => $user->null,
-                    'ip_address' => $request->ip(),
-                    'user_agent' => $request->header('User-Agent'),
-                    'date' => $date,
-                    'login_time' => $login_time,
-                ]);
+                $userRole = $user->role;
+                $adminRole = "admin";
+
+                if( $userRole !== $adminRole){
+
+                    LoginLog::create([
+                        'user_id' => $user->id,
+                        'store_id' => $user->null,
+                        'ip_address' => $request->ip(),
+                        'user_agent' => $request->header('User-Agent'),
+                        'date' => $date,
+                        'login_time' => $login_time,
+                    ]);
+                }
 
                 $token = Str::random(80);
                 $apiToken = Hash::make($token);

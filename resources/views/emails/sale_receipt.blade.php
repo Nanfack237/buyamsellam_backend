@@ -51,7 +51,7 @@
                     <th>{{ __('receipt.table_header_product') }}</th>
                     <th>{{ __('receipt.table_header_quantity') }}</th>
                     <th>{{ __('receipt.table_header_unit_price')  }}{{ __('receipt.currency') }}</th>
-                    <th>{{ __('receipt.table_header_total') }}</th>
+                    <th>{{ __('receipt.table_header_total') }}{{ __('receipt.currency') }}</th>
                 </tr>
             </thead>
             <tbody>
@@ -68,7 +68,7 @@
         </table>
 
         <div class="total-section">
-            <p>{{ __('receipt.total') }} <strong>{{ __('receipt.currency') }} {{ number_format($details['total_amount'], 0, '.', ',') }}</strong></p>
+            <p>{{ __('receipt.total') }} <strong> {{ number_format($details['total_amount'], 0, '.', ',') }}{{ __('receipt.currency') }}</strong></p>
         </div>
 
         <div class="footer">

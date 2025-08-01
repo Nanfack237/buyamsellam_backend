@@ -505,6 +505,60 @@ class StoreController extends Controller
         }
     }
 
+    
+
+    public function adminEditStatus(Request $request, $id)
+    {
+
+        
+        $userData = json_decode($request->user, true);
+        $userId = $userData['id'];
+
+        $userCheck = User::find($userId);
+        $adminRole = "admin";
+       
+        if (!$userCheck) {
+            return response()->json(['error' => 'User not found.'], 404);
+        }
+
+        if(!$userData['role'] === $adminRole){
+            return response()->json(['error' => 'You are not authorized to do this operation'], 401);
+        }
+
+        $validator = Validator::make($request->all(), [
+            
+            'status'=>'required|integer|in:0,1',
+            
+        ]);
+
+        if ($validator->fails()) {
+            return $this->error('error', Response::HTTP_UNPROCESSABLE_ENTITY, $validator->errors());
+        }
+
+        $store = Store::where('id', $id)->first();
+
+        $editStoreStatus= $validator->validated(); 
+
+        
+        $store->status = $editStoreStatus['status'];
+       
+        if ($store->save()) {
+            $status = 200;
+            $response = [
+                'success' => 'Status changed successfully!',
+                'store' => $store,
+            ];
+        } else {
+            $status = 422;
+            $response = [
+                'error' => 'Error, failed to change store status',
+            ];
+        }
+
+        return response()->json($response, $status);
+    }
+
+
     public function activeStores(Request $request)
     {
 
@@ -727,4 +781,5 @@ class StoreController extends Controller
           
         ], 200);
     }
+
 }

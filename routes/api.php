@@ -46,6 +46,7 @@ Route::middleware(Authenticate::class)->group(function () {
     Route::get('/admin/activestores', [StoreController::class, 'activeStores']);
     Route::get('/admin/topstores', [StoreController::class, 'getTopStores']);
     Route::get('/admin/storeperweek', [StoreController::class, 'storePerWeek']);
+    Route::put('/admin/stores/edit/{id}/status',[StoreController::class, 'adminEditStatus']);
 
 
     Route::get('/admin/saleperweek', [SaleController::class, 'adminSalePerWeek']);
